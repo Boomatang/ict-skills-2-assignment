@@ -10,6 +10,7 @@ import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import Message from '../components/message';
 import MessageList from '../components/messageList';
 import SendBox from '../components/sendBox';
+import MessagePane from '../components/messagePane'
 
 storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
 
@@ -30,9 +31,14 @@ const message =
     timeStamp: "13:40 Wed 19/04/2019",
     message: "This is a message 1. And this is a long message just to get it to wrap around"
   };
+
+let message1 = {...message, sender: "User = Sender", owner: true};
+
 storiesOf("Messages", module)
-  .add("Single Message", () =><Message message={message}/>)
-  .add("List of Messages", () => <MessageList/>);
+  .add("Single Message Received", () =><Message message={message}/>)
+  .add("Single Message Sent", () =><Message message={message1}/>)
+  .add("List of Messages", () => <MessageList/>)
+  .add("Full Message Pane", () => <MessagePane/>);
 
 storiesOf("Send Box", module)
   .add("Default", () => <SendBox/>);
