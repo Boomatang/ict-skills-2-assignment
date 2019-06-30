@@ -1,0 +1,20 @@
+.sample {
+    /*background-color: lightblue;*/
+    /*border:1px solid red;*/
+}
+
+.message-frame {
+    margin-top: 10px;
+    background-color: aliceblue;
+    border-radius: 10px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.message-received {
+    margin-left: 10px;
+}
+
+.message-sent {
+    margin-right: 10px;
+}
