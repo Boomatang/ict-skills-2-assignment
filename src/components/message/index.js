@@ -7,11 +7,10 @@ class Message extends Component {
     return (
     <div className="col-8 message-frame message-received">
       <div className={"sample text-info"}>
-        Fake User : 13:37 Wed 19/04/2019
+        {this.props.message.sender} : {this.props.message.timeStamp}
       </div>
       <div className={"sample"}>
-        <p>Body of message is going in here.
-        And this is a long message just to get it to wrap around</p>
+        {this.props.message.message}
       </div>
     </div>
     )

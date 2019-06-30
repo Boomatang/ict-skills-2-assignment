@@ -7,7 +7,8 @@ import { linkTo } from '@storybook/addon-links';
 import { Button, Welcome } from '@storybook/react/demo';
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import Message from '../components/message'
+import Message from '../components/message';
+import MessageList from '../components/messageList';
 
 storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
 
@@ -21,5 +22,13 @@ storiesOf('Button', module)
     </Button>
   ));
 
+const message =
+  {
+    id: 1,
+    sender: "Fake User 1",
+    timeStamp: "13:40 Wed 19/04/2019",
+    message: "This is a message 1. And this is a long message just to get it to wrap around"
+  };
 storiesOf("Messages", module)
-  .add("Single Message", () => <Message/>);
+  .add("Single Message", () =><Message message={message}/>)
+  .add("List of Messages", () => <MessageList/>);
