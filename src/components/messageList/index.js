@@ -21,6 +21,7 @@ class MessageList extends Component {
       },
       {
         id: 3,
+        owner: true,
         sender: "Fake User 2",
         timeStamp: "13:45 Wed 19/04/2019",
         message: "This is a message 3 And this is a long message just to get it to wrap around"
@@ -38,8 +39,8 @@ class MessageList extends Component {
     ));
 
     return (
-      <div className="container-fluid contacts bg-info">
-        <div className="row">{messageCards}</div>
+      <div className="container bg-info">
+        {messageCards}
       </div>
     )}
 }
