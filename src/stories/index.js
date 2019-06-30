@@ -9,6 +9,7 @@ import { Button, Welcome } from '@storybook/react/demo';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import Message from '../components/message';
 import MessageList from '../components/messageList';
+import SendBox from '../components/sendBox';
 
 storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
 
@@ -32,3 +33,6 @@ const message =
 storiesOf("Messages", module)
   .add("Single Message", () =><Message message={message}/>)
   .add("List of Messages", () => <MessageList/>);
+
+storiesOf("Send Box", module)
+  .add("Default", () => <SendBox/>);
