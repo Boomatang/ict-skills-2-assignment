@@ -2,16 +2,20 @@ import React, {Component} from 'react';
 import MessageList from '../messageList';
 import SendBox from '../sendBox';
 
+import { Layout } from 'antd';
+
+const {  Content } = Layout;
+
 class MessagePane extends Component {
 
   render(){
     return (
-      <div className={"h-100 w-100 sample bg-info"}>
+      <Content>
         <MessageList />
         <br/>
         <SendBox />
 
-      </div>
+      </Content>
     )
   }
 }

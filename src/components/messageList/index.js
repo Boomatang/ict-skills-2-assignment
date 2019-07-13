@@ -39,7 +39,7 @@ class MessageList extends Component {
     ));
 
     return (
-      <div className="container-fluid align-items-stretch">
+      <div>
         {messageCards}
       </div>
     )}

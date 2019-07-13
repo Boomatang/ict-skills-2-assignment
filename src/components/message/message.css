@@ -7,15 +7,15 @@
     margin-top: 10px;
     background-color: aliceblue;
     border-radius: 10px;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding: 3px 5px;
 }
 
 .message-received {
     margin-left: 10px;
-    margin-right: 10px;
+    text-align: start;
 }
 
-.message-sent {
+.message-sender {
     margin-right: 10px;
+    text-align: end;
 }
