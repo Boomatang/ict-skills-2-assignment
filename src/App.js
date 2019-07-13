@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { Button } from 'antd';
 
 function App() {
   return (
@@ -8,6 +9,9 @@ function App() {
       <div className={"justify-content-center"}>
         <h1 className={"text-danger"}>Bootstrap</h1>
       </div>
+   <div>
+     <Button type={'primary'}>Button</Button>
+   </div>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
