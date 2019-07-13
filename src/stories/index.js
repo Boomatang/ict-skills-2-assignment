@@ -1,28 +1,12 @@
 import React from 'react';
 
 import { storiesOf } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
-import { linkTo } from '@storybook/addon-links';
-
-import { Button, Welcome } from '@storybook/react/demo';
 
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import Message from '../components/message';
 import MessageList from '../components/messageList';
 import SendBox from '../components/sendBox';
 import MessagePane from '../components/messagePane'
-
-storiesOf('Welcome', module).add('to Storybook', () => <Welcome showApp={linkTo('Button')} />);
-
-storiesOf('Button', module)
-  .add('with text', () => <Button onClick={action('clicked')}>Hello Button</Button>)
-  .add('with some emoji', () => (
-    <Button onClick={action('clicked')}>
-      <span role="img" aria-label="so cool">
-        😀 😎 👍 💯
-      </span>
-    </Button>
-  ));
 
 const message =
   {
@@ -42,3 +26,8 @@ storiesOf("Messages", module)
 
 storiesOf("Send Box", module)
   .add("Default", () => <SendBox/>);
+
+storiesOf("User components", module)
+  .add("Chat button", () => "Button with user people to chat withs name")
+  .add("Chat button with unread messages", () => "Button with label of unread messages")
+  .add("List of chats", () => "List of chat buttons with some having unread messages");
