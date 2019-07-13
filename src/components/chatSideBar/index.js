@@ -8,56 +8,21 @@ const {Sider} = Layout;
 
 class ChatSideBar extends Component {
 
-  data = [
-    {
-      id: 1,
-      name: 'Joan',
-      unread: 8
-    },
-    {
-      id: 2,
-      name: 'Tom',
-      unread: 0
-    },
-    {
-      id: 3,
-      name: 'Frank',
-      unread: 101
-    },
-    {
-      id: 4,
-      name: 'Anne',
-      unread: 8
-    },
-    {
-      id: 5,
-      name: 'Fake user 1',
-      unread: 11
-    },
-    {
-      id: 6,
-      name: 'Tim Alan',
-      unread: 0
-    },
-  ];
 
   render() {
 
     let start_id = false;
 
-    const chats = this.data.map(m => {
+    const chats = this.props.users.map(m => {
       if (!start_id) {
         start_id = m.id;
       }
-
       return (
-      <Menu.Item key={`${m.id}`}>
-        <ChatSideSelect user={m}></ChatSideSelect>
-      </Menu.Item>
+        <Menu.Item key={`${m.id}`} onClick={(item) => {console.log(item)}}>
+          <ChatSideSelect user={m}/>
+        </Menu.Item>
       )
     });
-
-
 
     return (
 
@@ -67,7 +32,7 @@ class ChatSideBar extends Component {
           defaultSelectedKeys={[`${start_id}`]}
           style={{height: '100%'}}
         >
-        {chats}
+          {chats}
 
         </Menu>
       </Sider>
