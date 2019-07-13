@@ -4,7 +4,7 @@ from flask_cors import CORS
 from pony.flask import Pony
 
 from config import config
-from resources import User
+from resources import User, Message
 
 app = Flask(__name__)
 CORS(app)
@@ -15,6 +15,7 @@ app.config.update(
 )
 
 api.add_resource(User, "/user")
+api.add_resource(Message, "/msg")
 
 Pony(app)
 
