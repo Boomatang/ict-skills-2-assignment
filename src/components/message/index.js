@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { Row, Col } from "antd";
 import './message.css'
 
 class Message extends Component {
@@ -6,15 +7,18 @@ class Message extends Component {
 
   compare_side (){
     if(this.props.message.owner){
-      return 'justify-content-end text-right'
+      return 24
     }
   }
 
   render(){
 
     return (
-<div className={`row ${this.compare_side()}`}>
-    <div className={`col-8  sample message-frame message-received`}>
+/*<div className={`row ${this.compare_side()}`}>*/
+      <div>
+  <Row>
+  <Col span={8}>
+    <div className={`sample message-frame message-received`}>
       <div className={"sample text-info"}>
         {this.props.message.sender} : {this.props.message.timeStamp}
       </div>
@@ -22,7 +26,9 @@ class Message extends Component {
         {this.props.message.message}
       </div>
     </div>
-</div>
+  </Col>
+  </Row>
+      </div>
     )
   }
 }
