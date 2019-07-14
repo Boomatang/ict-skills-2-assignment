@@ -3,6 +3,8 @@ import React, {Component} from "react";
 import ChatSideSelect from '../chatSideSelect';
 
 import './chatSideBar.css'
+import api from "../../dataStore/API"
+
 
 const {Sider} = Layout;
 
@@ -18,7 +20,7 @@ class ChatSideBar extends Component {
         start_id = m.id;
       }
       return (
-        <Menu.Item key={`${m.id}`} onClick={(item) => {console.log(item)}}>
+        <Menu.Item key={`${m.id}`} onClick={this.props.messageOnClick}>
           <ChatSideSelect user={m}/>
         </Menu.Item>
       )

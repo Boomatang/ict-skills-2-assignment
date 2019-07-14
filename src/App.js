@@ -12,6 +12,10 @@ const { Header, Content, Footer } = Layout;
 
 class App extends Component {
 
+  state = {
+    messages: []
+  };
+
   componentDidMount() {
     request.get("http://localhost:5000/user").end((error, res) => {
       console.groupCollapsed('Setting up users');
@@ -29,7 +33,36 @@ class App extends Component {
     });
   }
 
+  getMessagesHandler = (item, e) => {
+    console.log(item);
+    console.log(e);
+    this.getMessages(item.key);
+    // e.preventDefault();
+    console.log('handler pressed')
+  };
+
+  getMessages(receiver){
+
+    const sender = 1;
+    request.post('http://localhost:5000/msg', {sender: sender, receiver: receiver}).end((error, res) => {
+      console.groupCollapsed('Setting up messages');
+      console.log('sender : ', sender);
+      console.log('receiver : ', receiver);
+      if (res) {
+        console.log('request : ', res);
+        let { messages: messages } = JSON.parse(res.text);
+        console.log("messages", messages);
+        this.setState({messages: messages})
+
+      } else {
+        console.log(error);
+      }
+      console.groupEnd();
+    });
+  }
+
   render() {
+
 
     return (
       <Layout>
@@ -56,10 +89,10 @@ class App extends Component {
 
           <Layout style={{padding: '24px 0', background: '#fff'}}>
 
-            <ChatSideBar users={api.getAll()} />
+            <ChatSideBar users={api.getAll()} messageOnClick={this.getMessagesHandler}/>
 
             <Content style={{padding: '0 24px', minHeight: 280}}>
-              <MessagePane/>
+              <MessagePane messages={this.state.messages}/>
             </Content>
 
           </Layout>

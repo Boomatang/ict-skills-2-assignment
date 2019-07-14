@@ -30,7 +30,7 @@ class Message extends Component {
           <Col span={14} offset={this.config.offset}>
             <div className={`message-frame ${this.config.type}`}>
               <Text type={"danger"}>
-                {this.props.message.sender} : {this.props.message.timeStamp}
+                {this.props.message.sender} : {this.props.message.timestamp}
               </Text>
               <Paragraph>
                 {this.props.message.message}

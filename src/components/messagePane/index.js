@@ -11,7 +11,7 @@ class MessagePane extends Component {
   render(){
     return (
       <Content>
-        <MessageList />
+        <MessageList messages={this.props.messages} />
         <br/>
         <SendBox />
 

@@ -1,6 +1,11 @@
 import _ from "lodash";
+import request from "superagent";
 
 class StubAPI {
+
+  url ='http://localhost:5000/';
+
+
   constructor() {
     this.contacts = [];
   }
@@ -37,6 +42,24 @@ class StubAPI {
       return true;
     }
     return false;
+  }
+
+  getMessages(sender){
+    const receiver = 1;
+    request.post('http://localhost:5000/msg', {sender: sender, receiver: receiver}).end((error, res) => {
+      console.groupCollapsed('Setting up messages');
+      console.log('sender : ', sender);
+      console.log('receiver : ', receiver);
+      if (res) {
+        console.log('request : ', res);
+        let { messages: messages } = JSON.parse(res.text);
+        console.log("messages", messages);
+
+      } else {
+        console.log(error);
+      }
+      console.groupEnd();
+    });
   }
 }
 

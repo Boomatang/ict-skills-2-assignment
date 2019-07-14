@@ -34,7 +34,7 @@ class MessageList extends Component {
       }
     ];
 
-    const messageCards = temp_data.map( m => (
+    const messageCards = this.props.messages.map( m => (
       <Message key={m.id} message={m}/>
     ));
 
