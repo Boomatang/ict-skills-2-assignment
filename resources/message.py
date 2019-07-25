@@ -1,8 +1,12 @@
+from datetime import datetime
+import arrow
+from arrow.parser import ParserError
 from flask import request, json
 from flask_restful import Resource
-from pony.orm import select
+from pony.orm import select, db_session, commit
 
 from model import Message as msg
+from model import User as user
 
 
 class Message(Resource):
@@ -11,8 +15,8 @@ class Message(Resource):
         received_data = request.data
         received_data = json.loads(received_data)
 
-        sender = received_data['sender']
-        receiver = received_data['receiver']
+        sender = int(received_data['sender'])
+        receiver = int(received_data['receiver'])
 
         data_filter = [sender, receiver]
 
@@ -31,3 +35,49 @@ class Message(Resource):
 
         return json.jsonify(result)
 
+
+class SingleMessage(Resource):
+    def post(self, receiver):
+        print(type(receiver))
+
+        received_data = request.data
+        received_data = json.loads(received_data)
+        print(received_data)
+
+        person = select(u for u in user if u.id == receiver)
+        person = person.first()
+
+        if person is None:
+            return {'Error': 'Receiver not found'}, 400
+
+        sender = select(u for u in user if u.id == received_data['sender'])
+        sender = sender.first()
+
+        if sender is None:
+            return {'Error': 'Sender not found'}, 400
+
+        timestamp = received_data['timestamp']
+
+        try:
+            timestamp = arrow.get(timestamp).datetime
+        except ParserError as err:
+            timestamp = datetime.utcnow()
+            print(err)
+
+        print(timestamp)
+        print(type(timestamp))
+        body = received_data['body']
+        message = create_message(timestamp, sender, receiver, body)
+
+        return {'message': message}, 201
+
+
+def create_message(timestamp, sender, receiver, body):
+
+    with db_session:
+        message = msg(timestamp=timestamp, sender=sender, receiver=receiver, body=body)
+        commit()
+
+    print(message.sender.id)
+    print(sender.id)
+    return message.format_data(sender.id)

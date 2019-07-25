@@ -48,7 +48,7 @@ def add_messages():
             choice = [current, them]
 
             stopper = random.randint(8, 15)
-            start_date = datetime.datetime(2019, 9, 20, 13, 00)
+            start_date = datetime.datetime(2019, 7, 10, 13, 00)
 
             for x in reversed(list(random_date(start_date, stopper))):
                 sender = random.choice(choice)
