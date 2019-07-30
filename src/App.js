@@ -13,17 +13,21 @@ const { Header, Content, Footer } = Layout;
 class App extends Component {
 
   state = {
-    messages: []
+    messages: [],
+    text: null
   };
 
-  componentDidMount() {
+
+  componentWillMount() {
+    this.getUser();
+  }
+
+  getUser(){
     request.get("http://localhost:5000/user").end((error, res) => {
       console.groupCollapsed('Setting up users');
 
       if (res) {
-        console.log('request : ', res);
         let { users: contacts } = JSON.parse(res.text);
-        console.log("contacts", contacts);
         api.initialize(contacts);
         this.setState({});
       } else {
@@ -34,25 +38,20 @@ class App extends Component {
   }
 
   getMessagesHandler = (item, e) => {
-    console.log(item);
-    console.log(e);
-    this.getMessages(item.key);
-    // e.preventDefault();
-    console.log('handler pressed')
+    const sender = 1;
+    this.getMessages(item.key, sender);
+    this.startEventSource();
   };
 
-  getMessages(receiver){
-
-    const sender = 1;
+  getMessages(receiver, sender){
     request.post('http://localhost:5000/msg', {sender: sender, receiver: receiver}).end((error, res) => {
       console.groupCollapsed('Setting up messages');
-      console.log('sender : ', sender);
-      console.log('receiver : ', receiver);
       if (res) {
-        console.log('request : ', res);
         let { messages: messages } = JSON.parse(res.text);
-        console.log("messages", messages);
-        this.setState({messages: messages})
+        this.setState({
+          messages: messages,
+          receiver: receiver
+        })
 
       } else {
         console.log(error);
@@ -60,6 +59,32 @@ class App extends Component {
       console.groupEnd();
     });
   }
+
+
+  startEventSource(){
+    console.error("Start Event Source Called");
+
+    const eventSource = new EventSource(`http://localhost:5000/stream`);
+    eventSource.addEventListener('greeting', event => {
+      const data = JSON.parse(event.data);
+      console.groupCollapsed("Stream Data");
+      console.log("Data Stream : ", data);
+
+      console.log("this.state", this.state);
+      console.groupEnd();
+
+      const messages = [...this.state.messages, data.message];
+
+      this.setState({
+        messages: messages
+      })
+    }, false);
+
+    eventSource.addEventListener('error', event => {
+      alert("Failed to connect to event stream. Is Redis running?");
+    }, false);
+  }
+
 
   render() {
 
@@ -92,7 +117,7 @@ class App extends Component {
             <ChatSideBar users={api.getAll()} messageOnClick={this.getMessagesHandler}/>
 
             <Content style={{padding: '0 24px', minHeight: 280}}>
-              <MessagePane messages={this.state.messages}/>
+              <MessagePane messages={this.state.messages} receiver={this.state.receiver}/>
             </Content>
 
           </Layout>

@@ -13,7 +13,7 @@ class MessagePane extends Component {
       <Content>
         <MessageList messages={this.props.messages} />
         <br/>
-        <SendBox />
+        <SendBox onClick={this.props.sendMessage} receiver={this.props.receiver}/>
 
       </Content>
     )
