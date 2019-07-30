@@ -3,6 +3,7 @@ import arrow
 from arrow.parser import ParserError
 from flask import request, json
 from flask_restful import Resource
+from flask_sse import sse
 from pony.orm import select, db_session, commit
 
 from model import Message as msg
@@ -38,12 +39,8 @@ class Message(Resource):
 
 class SingleMessage(Resource):
     def post(self, receiver):
-        print(type(receiver))
-
         received_data = request.data
         received_data = json.loads(received_data)
-        print(received_data)
-
         person = select(u for u in user if u.id == receiver)
         person = person.first()
 
@@ -64,10 +61,11 @@ class SingleMessage(Resource):
             timestamp = datetime.utcnow()
             print(err)
 
-        print(timestamp)
-        print(type(timestamp))
         body = received_data['body']
         message = create_message(timestamp, sender, receiver, body)
+        channel = f"{receiver}-{sender}"
+
+        sse.publish({"message": message}, type="greeting")
 
         return {'message': message}, 201
 
@@ -78,6 +76,4 @@ def create_message(timestamp, sender, receiver, body):
         message = msg(timestamp=timestamp, sender=sender, receiver=receiver, body=body)
         commit()
 
-    print(message.sender.id)
-    print(sender.id)
     return message.format_data(sender.id)

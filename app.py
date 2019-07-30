@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import Api
 from flask_cors import CORS
 from pony.flask import Pony
-
+from flask_sse import sse
 from config import config
 from resources import User, Message, SingleMessage
 
@@ -13,6 +13,8 @@ api = Api(app)
 app.config.update(
     dict(PONY=config)
 )
+app.config["REDIS_URL"] = "redis://localhost"
+app.register_blueprint(sse, url_prefix="/stream")
 
 api.add_resource(User, "/user")
 api.add_resource(Message, "/msg")
