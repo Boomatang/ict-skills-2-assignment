@@ -40,7 +40,7 @@ class App extends Component {
   getMessagesHandler = (item, e) => {
     const sender = 1;
     this.getMessages(item.key, sender);
-    this.startEventSource();
+    this.startEventSource(sender, item.key);
   };
 
   getMessages(receiver, sender){
@@ -60,12 +60,11 @@ class App extends Component {
     });
   }
 
-
-  startEventSource(){
+  startEventSource(to, from){
     console.error("Start Event Source Called");
-
+    const channel = `${to}-${from}`;
     const eventSource = new EventSource(`http://localhost:5000/stream`);
-    eventSource.addEventListener('greeting', event => {
+    eventSource.addEventListener(channel, event => {
       const data = JSON.parse(event.data);
       console.groupCollapsed("Stream Data");
       console.log("Data Stream : ", data);
@@ -85,6 +84,40 @@ class App extends Component {
     }, false);
   }
 
+  handleMessageSend = item => {
+    console.groupCollapsed('Sending message');
+    if (this.state.text !== null) {
+      console.log("Button was Pressed");
+      console.log('Message been sent to : ', this.props.receiver);
+      console.log('Date: ', Date());
+      console.log("item: ", (item));
+
+      const timestamp = new Date();
+      const body = this.state.text;
+      request.post(`http://localhost:5000/msg/${this.state.receiver}`, {timestamp: timestamp, body: body, sender: '1'}).end((error, res) => {
+        if (res) {
+          console.log("received", res);
+          const data = JSON.parse(res.text);
+          console.log("data : ", data);
+          const messages = [...this.state.messages, data.message];
+
+          this.setState({
+            messages: messages
+          })
+        } else {
+          console.log(error);
+        }
+      });
+      this.setState({text: null})
+    } else {
+      console.log('Blank text box')
+    }
+    console.groupEnd();
+  };
+
+  handleTextChange = e => {
+    this.setState({text: e.target.value});
+  };
 
   render() {
 
@@ -117,7 +150,10 @@ class App extends Component {
             <ChatSideBar users={api.getAll()} messageOnClick={this.getMessagesHandler}/>
 
             <Content style={{padding: '0 24px', minHeight: 280}}>
-              <MessagePane messages={this.state.messages} receiver={this.state.receiver}/>
+              <MessagePane messages={this.state.messages}
+                           onClick={this.handleMessageSend}
+                           onChange={this.handleTextChange}
+              />
             </Content>
 
           </Layout>
