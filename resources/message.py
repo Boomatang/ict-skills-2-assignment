@@ -62,18 +62,30 @@ class SingleMessage(Resource):
             print(err)
 
         body = received_data['body']
-        message = create_message(timestamp, sender, receiver, body)
-        channel = f"{receiver}-{sender}"
 
-        sse.publish({"message": message}, type="greeting")
+        channel = f"{receiver}-{sender.id}"
+        print(channel)
+
+        message = create_message(timestamp, sender, receiver, body, channel)
+        channel = f"{receiver}-{sender.id}"
+        print(channel)
+
+        sse.publish({"message": message}, type=channel)
 
         return {'message': message}, 201
 
 
-def create_message(timestamp, sender, receiver, body):
+def create_message(timestamp, sender, receiver, body, channel):
 
     with db_session:
         message = msg(timestamp=timestamp, sender=sender, receiver=receiver, body=body)
         commit()
 
-    return message.format_data(sender.id)
+    if channel == f'{sender.id}-{receiver}':
+        print('in first if')
+        return message.format_data(sender.id)
+    else:
+        print('in else')
+
+        return message.format_data(receiver)
+
