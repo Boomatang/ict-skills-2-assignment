@@ -6,13 +6,13 @@ import random
 from model import User, Message
 
 user_data = [
-    {'name': 'Joan', 'unread': 0},
-    {'name': 'Alan', 'unread': 4},
-    {'name': 'Peter', 'unread': 3},
-    {'name': 'Frank', 'unread': 5},
-    {'name': 'Laura', 'unread': 11},
-    {'name': 'Liam', 'unread': 0},
-    {'name': 'Anne', 'unread': 0}
+    {'name': 'Joan'},
+    {'name': 'Alan'},
+    {'name': 'Peter'},
+    {'name': 'Frank'},
+    {'name': 'Laura'},
+    {'name': 'Liam'},
+    {'name': 'Anne'}
 ]
 
 messages = [
@@ -30,7 +30,7 @@ messages = [
 def add_users():
     with db_session:
         for user in user_data:
-            User(name=user['name'], unread=user['unread'])
+            User(name=user['name'])
     commit()
 
 
