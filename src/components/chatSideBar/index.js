@@ -20,7 +20,7 @@ class ChatSideBar extends Component {
       }
       return (
         <Menu.Item key={`${m.id}`} onClick={this.props.messageOnClick}>
-          <ChatSideSelect user={m}/>
+          <ChatSideSelect user={m} eventSource={this.props.eventSource}/>
         </Menu.Item>
       )
     });

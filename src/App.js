@@ -48,10 +48,11 @@ class App extends Component {
   }
 
   getMessagesHandler = (item, e) => {
+    console.log("I was pressed");
     const user = this.state.user;
     this.getMessages(item.key, user);
     this.startEventSource(user, item.key);
-    this.markAllRead(user, item.key)
+    this.markAllRead(1, item.key)
   };
 
   markAllRead(user, senderId){
@@ -67,6 +68,7 @@ class App extends Component {
   }
 
   getMessages(receiver, sender){
+    console.log("what is going on");
     request.post('http://localhost:5000/msg', {sender: sender, receiver: receiver}).end((error, res) => {
       console.groupCollapsed('Setting up messages');
       if (res) {
@@ -97,28 +99,34 @@ class App extends Component {
     if(prevChannel !== null) {
       console.log('prevChannel : ', prevChannel);
       console.log(this.eventSource.url);
+      this.eventSource.removeEventListener(prevChannel, this.messageEvent);
       console.log('Removed old channel event listener')
 
     }
 
-    this.eventSource.addEventListener(channel, event => {
-      const data = JSON.parse(event.data);
-      console.groupCollapsed("Stream Data");
-      console.log("Data Stream : ", data);
+    this.eventSource.addEventListener(channel, event => {this.messageEvent(event)}, false);
 
-      console.log("this.state", this.state);
-      console.groupEnd();
+    this.eventSource.addEventListener('error', event => {this.failedConnect(event)}, false);
+  }
 
-      const messages = [...this.state.messages, data.message];
+  messageEvent(event){
+    const data = JSON.parse(event.data);
+    console.groupCollapsed("Stream Data");
+    console.log("Data Stream : ", data);
 
-      this.setState({
-        messages: messages
-      })
-    }, false);
+    console.log("this.state", this.state);
+    console.groupEnd();
 
-    this.eventSource.addEventListener('error', event => {
-      alert("Failed to connect to event stream. Is Redis running?");
-    }, false);
+    const messages = [...this.state.messages, data.message];
+
+    this.setState({
+      messages: messages
+    })
+  }
+
+  failedConnect(event){
+    // alert("Failed to connect to event stream. Is Redis running?");
+    console.error(event)
   }
 
   handleMessageSend = item => {
@@ -184,7 +192,10 @@ class App extends Component {
 
           <Layout style={{padding: '24px 0', background: '#fff'}}>
 
-            <ChatSideBar users={this.state.contacts} messageOnClick={this.getMessagesHandler}/>
+            <ChatSideBar users={this.state.contacts}
+                         messageOnClick={this.getMessagesHandler}
+                         eventSource={this.eventSource}
+            />
 
             <Content style={{padding: '0 24px', minHeight: 280}}>
               <MessagePane messages={this.state.messages}

@@ -14,16 +14,12 @@ class ChatSideSelect extends Component{
   startEventSource(to, from){
     console.error("Start Event Source Called");
     const channel = `${to}-${from}-status`;
-    const eventSource = new EventSource(`http://localhost:5000/stream`);
+    // const eventSource = new EventSource(`http://localhost:5000/stream`);
 
-    eventSource.addEventListener(channel, event => {
+    this.props.eventSource.addEventListener(channel, event => {
       const data = JSON.parse(event.data);
       console.log("I go a message : ", data);
       this.updateUnread(data.count)
-    }, false);
-
-    eventSource.addEventListener('error', event => {
-      alert("Failed to connect to event stream. Is Redis running?");
     }, false);
   }
 
