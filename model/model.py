@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from flask_sse import sse
 from pony.orm import PrimaryKey, Set, Required, Database, select, count, db_session, commit
 
 from config import config
@@ -34,10 +35,18 @@ class User(db.Entity):
 
     def mark_as_read(self, sender_id):
         messages = (r for r in self.received if r.sender.id == sender_id)
+        counter = 0
         with db_session:
             for message in messages:
-                message.seen = True
+                if not message.seen:
+                    message.seen = True
+                    counter -= 1
             commit()
+
+        channel = f"{self.id}-{sender_id}-status"
+        print(channel)
+
+        sse.publish({'count': counter}, type=channel)
 
     def as_json(self, unread):
         return {
