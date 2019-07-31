@@ -10,6 +10,21 @@ from model import Message as msg
 from model import User as user
 
 
+class MessageStatus(Resource):
+    def post(self):
+
+        received_data = request.data
+        received_data = json.loads(received_data)
+
+        client = int(received_data['user'])
+        sender_id = int(received_data['senderId'])
+
+        client = user.get(id=client)
+        client.mark_as_read(sender_id)
+
+        return {"status": 'ok '}, 202
+
+
 class Message(Resource):
     def post(self):
 
@@ -70,8 +85,16 @@ class SingleMessage(Resource):
         channel = f"{receiver}-{sender.id}"
         print(channel)
 
-        sse.publish({"message": message}, type=channel)
+        # Sent message in chat
+        pub_message = message.copy()
+        del(pub_message['owner'])
+        sse.publish({"message": pub_message}, type=channel)
 
+        # Sent value to badge
+        channel = channel + '-status'
+        sse.publish({'count': 1}, type=channel)
+
+        # Reply to sender
         return {'message': message}, 201
 
 
@@ -80,12 +103,5 @@ def create_message(timestamp, sender, receiver, body, channel):
     with db_session:
         message = msg(timestamp=timestamp, sender=sender, receiver=receiver, body=body)
         commit()
-
-    if channel == f'{sender.id}-{receiver}':
-        print('in first if')
-        return message.format_data(sender.id)
-    else:
-        print('in else')
-
-        return message.format_data(receiver)
+    return message.format_data(sender.id)
 
