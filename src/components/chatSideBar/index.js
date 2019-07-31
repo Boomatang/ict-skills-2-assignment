@@ -3,7 +3,6 @@ import React, {Component} from "react";
 import ChatSideSelect from '../chatSideSelect';
 
 import './chatSideBar.css'
-import api from "../../dataStore/API"
 
 
 const {Sider} = Layout;

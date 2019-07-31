@@ -13,9 +13,19 @@ const { Header, Content, Footer } = Layout;
 class App extends Component {
 
   state = {
+    contacts: [],
     messages: [],
-    text: null
+    text: null,
+    channel: null,
+    user: 1
   };
+
+  constructor(props){
+
+    super(props);
+    this.eventSource = new EventSource(`http://localhost:5000/stream`);
+
+  }
 
 
   componentWillMount() {
@@ -28,8 +38,8 @@ class App extends Component {
 
       if (res) {
         let { users: contacts } = JSON.parse(res.text);
-        api.initialize(contacts);
-        this.setState({});
+        // api.initialize(contacts);
+        this.setState({contacts: contacts});
       } else {
         console.log(error);
       }
@@ -38,10 +48,23 @@ class App extends Component {
   }
 
   getMessagesHandler = (item, e) => {
-    const sender = 1;
-    this.getMessages(item.key, sender);
-    this.startEventSource(sender, item.key);
+    const user = this.state.user;
+    this.getMessages(item.key, user);
+    this.startEventSource(user, item.key);
+    this.markAllRead(user, item.key)
   };
+
+  markAllRead(user, senderId){
+    request.post('http://localhost:5000/msg/status', {user: user, senderId: senderId}).end((error, res) => {
+      console.groupCollapsed('Setting up messages');
+      if (res) {
+        console.log(res)
+      } else {
+        console.log(error);
+      }
+      console.groupEnd();
+    });
+  }
 
   getMessages(receiver, sender){
     request.post('http://localhost:5000/msg', {sender: sender, receiver: receiver}).end((error, res) => {
@@ -63,8 +86,22 @@ class App extends Component {
   startEventSource(to, from){
     console.error("Start Event Source Called");
     const channel = `${to}-${from}`;
-    const eventSource = new EventSource(`http://localhost:5000/stream`);
-    eventSource.addEventListener(channel, event => {
+    console.log('channel : ', channel);
+    const prevChannel = this.state.channel;
+    console.log('prevChannel : ', prevChannel);
+    // this.setState({channel: channel});
+    this.state.channel = channel;
+    console.log('state.channel : ', this.state.channel);
+    // const eventSource = new EventSource(`http://localhost:5000/stream`);
+
+    if(prevChannel !== null) {
+      console.log('prevChannel : ', prevChannel);
+      console.log(this.eventSource.url);
+      console.log('Removed old channel event listener')
+
+    }
+
+    this.eventSource.addEventListener(channel, event => {
       const data = JSON.parse(event.data);
       console.groupCollapsed("Stream Data");
       console.log("Data Stream : ", data);
@@ -79,7 +116,7 @@ class App extends Component {
       })
     }, false);
 
-    eventSource.addEventListener('error', event => {
+    this.eventSource.addEventListener('error', event => {
       alert("Failed to connect to event stream. Is Redis running?");
     }, false);
   }
@@ -147,7 +184,7 @@ class App extends Component {
 
           <Layout style={{padding: '24px 0', background: '#fff'}}>
 
-            <ChatSideBar users={api.getAll()} messageOnClick={this.getMessagesHandler}/>
+            <ChatSideBar users={this.state.contacts} messageOnClick={this.getMessagesHandler}/>
 
             <Content style={{padding: '0 24px', minHeight: 280}}>
               <MessagePane messages={this.state.messages}
