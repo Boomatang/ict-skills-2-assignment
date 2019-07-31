@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pony.orm import PrimaryKey, Set, Required, Database, select, count
+from pony.orm import PrimaryKey, Set, Required, Database, select, count, db_session, commit
 
 from config import config
 db = Database()
@@ -34,8 +34,10 @@ class User(db.Entity):
 
     def mark_as_read(self, sender_id):
         messages = (r for r in self.received if r.sender.id == sender_id)
-        for message in messages:
-            message.seen = True
+        with db_session:
+            for message in messages:
+                message.seen = True
+            commit()
 
     def as_json(self, unread):
         return {
