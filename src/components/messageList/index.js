@@ -1,36 +1,31 @@
 import React, {Component} from 'react';
 import Message from '../message';
-import request from "superagent";
 
 
 class MessageList extends Component {
 
-  // state = {
-  //   messages:[],
-  //   receiver: ''
-  // };
+  // messageCards = [];
+  //
+  // componentDidUpdate(prevProps, prevState, snapshot) {
+  //   console.log("component did update");
+  //   this.startEventSource(this.props.userData.sender, this.props.userData.receiver);
+  //   this.messageCards = this.props.messages.map( m => (
+  //     <Message key={m.id} message={m}/>
+  //   ));
+  //
+  // }
   //
   // componentDidMount() {
-  //   this.getMessages(2, 1)
+  //   console.log("component did mount");
+  //   this.startEventSource(this.props.userData.receiver, this.props.userData.sender)
   // }
-  //
-  // getMessages(receiver, sender){
-  //   console.log("what is going on");
-  //   request.post('http://localhost:5000/msg', {sender: sender, receiver: receiver}).end((error, res) => {
-  //     console.groupCollapsed('Setting up messages');
-  //     if (res) {
-  //       let { messages: messages } = JSON.parse(res.text);
-  //       this.setState({
-  //         messages: messages,
-  //         receiver: receiver
-  //       })
-  //
-  //     } else {
-  //       console.log(error);
-  //     }
-  //     console.groupEnd();
-  //   });
-  // }
+
+  startEventSource(to, from){
+    const channel = `${to}-${from}`;
+    console.log("channel : ", channel);
+    this.props.eventSource.addEventListener(channel, event => {this.props.messageEvent(event)}, false);
+
+  }
 
   render() {
     const messageCards = this.props.messages.map( m => (

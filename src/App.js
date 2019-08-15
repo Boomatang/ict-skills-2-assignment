@@ -17,7 +17,10 @@ class App extends Component {
     messages: [],
     text: null,
     channel: null,
-    user: 1
+    userData: {
+      sender: 1,
+      receiver: 1
+    }
   };
 
   constructor(props){
@@ -49,7 +52,14 @@ class App extends Component {
 
   getMessagesHandler = (item, e) => {
     console.log("I was pressed");
-    const user = this.state.user;
+    const user = this.state.userData.sender;
+    this.setState({
+      userData: {
+        sender: user,
+        receiver:item.key,
+      }
+    });
+
     this.getMessages(item.key, user);
     this.startEventSource(user, item.key);
     this.markAllRead(1, item.key)
@@ -75,7 +85,11 @@ class App extends Component {
         let { messages: messages } = JSON.parse(res.text);
         this.setState({
           messages: messages,
-          receiver: receiver
+          receiver: receiver,
+          userData: {
+            sender: sender,
+            receiver: receiver
+          }
         })
 
       } else {
@@ -114,14 +128,14 @@ class App extends Component {
     console.groupCollapsed("Stream Data");
     console.log("Data Stream : ", data);
 
-    console.log("this.state", this.state);
+    // console.log("this.state", this.state);
     console.groupEnd();
 
-    const messages = [...this.state.messages, data.message];
+    // const messages = [...this.state.messages, data.message];
 
-    this.setState({
-      messages: messages
-    })
+    // this.setState({
+    //   messages: messages
+    // })
   }
 
   failedConnect(event){
@@ -195,12 +209,16 @@ class App extends Component {
             <ChatSideBar users={this.state.contacts}
                          messageOnClick={this.getMessagesHandler}
                          eventSource={this.eventSource}
+
             />
 
             <Content style={{padding: '0 24px', minHeight: 280}}>
               <MessagePane messages={this.state.messages}
                            onClick={this.handleMessageSend}
                            onChange={this.handleTextChange}
+                           eventSource={this.eventSource}
+                           messageEvent={this.messageEvent}
+                           userData={this.state.userData}
               />
             </Content>
 

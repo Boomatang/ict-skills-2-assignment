@@ -11,7 +11,12 @@ class MessagePane extends Component {
   render(){
     return (
       <Content>
-        <MessageList messages={this.props.messages} value={this.props.value}/>
+        <MessageList messages={this.props.messages}
+                     value={this.props.value}
+                     eventSource={this.props.eventSource}
+                     messageEvent={this.props.messageEvent}
+                     userData={this.props.userData}
+        />
         <br/>
         <SendBox onClick={this.props.onClick} onChange={this.props.onChange}/>
       </Content>

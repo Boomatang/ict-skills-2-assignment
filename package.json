@@ -18,6 +18,7 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
+    "start-local": "HOST='192.168.0.105' react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
