@@ -33,15 +33,15 @@ class User(db.Entity):
         value = count(m for m in self.sent if not m.seen and m.receiver.id == who)
         return value
 
+    @db_session
     def mark_as_read(self, sender_id):
         messages = (r for r in self.received if r.sender.id == sender_id)
         counter = 0
-        with db_session:
-            for message in messages:
-                if not message.seen:
-                    message.seen = True
-                    counter -= 1
-            commit()
+        for message in messages:
+            if not message.seen:
+                message.seen = True
+                counter -= 1
+        commit()
 
         channel = f"{self.id}-{sender_id}-status"
         print(channel)

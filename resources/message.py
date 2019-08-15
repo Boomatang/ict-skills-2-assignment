@@ -26,6 +26,7 @@ class MessageStatus(Resource):
 
 
 class Message(Resource):
+    @db_session
     def post(self):
 
         received_data = request.data
@@ -43,16 +44,19 @@ class Message(Resource):
 
         for d in data:
             messages.append(d.format_data(sender))
+        commit()
 
         result = {
             'total': len(data),
             'messages': messages
         }
 
+
         return json.jsonify(result)
 
 
 class SingleMessage(Resource):
+    @db_session
     def post(self, receiver):
         received_data = request.data
         received_data = json.loads(received_data)
