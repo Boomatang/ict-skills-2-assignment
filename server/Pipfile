@@ -14,5 +14,3 @@ pony = "*"
 arrow = "*"
 flask-sse = "*"
 
-[requires]
-python_version = "3.7"
